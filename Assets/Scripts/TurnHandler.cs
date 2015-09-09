@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ComputerMovement : MonoBehaviour {
+public class TurnHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

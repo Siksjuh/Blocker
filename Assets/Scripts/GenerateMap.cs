@@ -5,6 +5,7 @@ public class GenerateMap : MonoBehaviour {
 
 public GameObject CubeB;
 public GameObject CubeW;
+public GameObject Border;
 public GameObject Player;
 public GameObject Computer;
 public Vector3 pos;
@@ -16,13 +17,18 @@ public bool ready;
 	// Use this for initialization
 	void Start () {
 		positions = new Vector3[4];
-		for (int i=-7;i<=7;i++){
-			for (int j=-7;j<=7;j++){
+
+		for (int i=-8;i<=8;i++){
+			for (int j=-8;j<=8;j++){
 				pos=new Vector3(j,i,0);
-				if((i+j)%2==0){
-						GameObject.Instantiate(CubeB, pos ,transform.rotation);
+				if(Mathf.Abs(i)==8||Mathf.Abs(j)==8){
+					GameObject.Instantiate(Border, pos ,transform.rotation);
 				}else{
-						GameObject.Instantiate(CubeW, pos , transform.rotation);
+					if((i+j)%2==0){
+							GameObject.Instantiate(CubeB, pos ,transform.rotation);
+					}else{
+							GameObject.Instantiate(CubeW, pos , transform.rotation);
+					}
 				}
 			}
 		}
@@ -53,6 +59,6 @@ public bool ready;
 		return new Vector3((int)Random.Range(-7, 7),(int)Random.Range(-7,7),-1);
 	}
 
-	//GameObject.Instantiate(Point, pos, transform.rotation);
+
 
 }
