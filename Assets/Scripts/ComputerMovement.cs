@@ -4,18 +4,20 @@ using System.Collections;
 public class ComputerMovement : MonoBehaviour {
 	public bool ComputerTurn;
 	public static bool CannotMove;
+	public bool[] DirectionsAvailable;
+	public Vector3[] MovePositions;
+	public GameObject PlayerGhost;
+	public GameObject ComputerGhost;
 
-	public bool UpR;
-	public bool DownR;
-	public bool LeftR;
-	public bool RightR;
 	public Vector3 pos;
-	private int MoveDirection;
+	private int MoveDirection; //0 = Up, 1 = Right, 2 = Down, 3 = Left
 
 	// Use this for initialization
 	void Start () {
 		CannotMove = false;
 		ComputerTurn = false;
+		DirectionsAvailable = new bool[4];
+		MovePositions = new Vector3[4];
 	}
 	
 	// Update is called once per frame
@@ -28,7 +30,7 @@ public class ComputerMovement : MonoBehaviour {
 
 	void MoveComputer(){
 		CheckAvailability();
-		if(!UpR&&!DownR&&!LeftR&&!RightR){
+		/*if(!UpR&&!DownR&&!LeftR&&!RightR){
 			CannotMove = true;
 		}else{
 			bool MoveReady = false;
@@ -73,45 +75,89 @@ public class ComputerMovement : MonoBehaviour {
 						break;
 				}
 			}while(MoveReady==false);
-		}
+		}*/
 	}
 
 	void CheckAvailability(){
+		GameObject[] Ghosts = GameObject.FindGameObjectsWithTag("Ghost");
+		if(Ghosts.Length>0){
+			for (int i = 0; i < Ghosts.Length; i++){
+				Destroy(Ghosts[i]);
+			}
+		}
+
 		Collider[] hitcolliders;
 
-		pos = new Vector3(transform.position.x,transform.position.y + 1.0f ,transform.position.z);
+		float step = 1.0f;
+		pos = new Vector3(transform.position.x,transform.position.y + step ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
 		if(hitcolliders.Length>0){
-			UpR = false;
+			DirectionsAvailable[0] = false;
+			MovePositions[0]=Vector3.zero;
 		}else {
-			UpR = true;
-		}
-		
-		pos = new Vector3(transform.position.x,transform.position.y - 1.0f ,transform.position.z);
-		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
-		if(hitcolliders.Length>0){ 
-			DownR = false;
-		}
-		else {
-			DownR = true;
-		}
-
-		pos = new Vector3(transform.position.x - 1.0f,transform.position.y ,transform.position.z);
-		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
-		if(hitcolliders.Length>0) {
-			LeftR = false;
-		}
-		else {
-			LeftR = true;
+			DirectionsAvailable[0] = true;
+			do{
+				MovePositions[0]=pos;
+				step += 1.0f;
+				pos = new Vector3(transform.position.x,transform.position.y + step ,transform.position.z);
+				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+			}while(hitcolliders.Length==0);
+			GameObject.Instantiate(ComputerGhost,MovePositions[0],transform.rotation);
+			
 		}
 
-		pos = new Vector3(transform.position.x + 1.0f,transform.position.y ,transform.position.z);
+		step = 1.0f;
+		pos = new Vector3(transform.position.x,transform.position.y - step ,transform.position.z);
+		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+		if(hitcolliders.Length>0){
+			DirectionsAvailable[2] = false;
+			MovePositions[2]=Vector3.zero;
+		}else {
+			DirectionsAvailable[2] = true;
+			do{
+				MovePositions[2]=pos;
+				step += 1.0f;
+				pos = new Vector3(transform.position.x,transform.position.y - step ,transform.position.z);
+				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+			}while(hitcolliders.Length==0);
+			GameObject.Instantiate(ComputerGhost,MovePositions[2],transform.rotation);
+			
+		}
+
+		step = 1.0f;
+		pos = new Vector3(transform.position.x - step,transform.position.y ,transform.position.z);
+		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+		if(hitcolliders.Length>0){
+			DirectionsAvailable[3] = false;
+			MovePositions[3]=Vector3.zero;
+		}else {
+			DirectionsAvailable[3] = true;
+			do{
+				MovePositions[3]=pos;
+				step += 1.0f;
+				pos = new Vector3(transform.position.x - step,transform.position.y ,transform.position.z);
+				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+			}while(hitcolliders.Length==0);
+			GameObject.Instantiate(ComputerGhost,MovePositions[3],transform.rotation);
+			
+		}
+
+		step = 1.0f;
+		pos = new Vector3(transform.position.x + step,transform.position.y ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);	
-		if(hitcolliders.Length>0) {
-			RightR = false;
-		}
-		else {
-			RightR = true;
+		if(hitcolliders.Length>0){
+			DirectionsAvailable[1] = false;
+			MovePositions[1]=Vector3.zero;
+		}else {
+			DirectionsAvailable[1] = true;
+			do{
+				MovePositions[1]=pos;
+				step += 1.0f;
+				pos = new Vector3(transform.position.x + step,transform.position.y ,transform.position.z);
+				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+			}while(hitcolliders.Length==0);
+			GameObject.Instantiate(ComputerGhost,MovePositions[1],transform.rotation);
+			
 		}
 	}
 }
