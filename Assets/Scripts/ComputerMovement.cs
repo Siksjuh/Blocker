@@ -2,11 +2,10 @@
 using System.Collections;
 
 public class ComputerMovement : MonoBehaviour {
-	public bool ComputerTurn;
+	public bool ComputerTurn; //temporary variable for testing
 	public bool MoveAvailable;
 	public bool[] DirectionsAvailable;
 	public Vector3[] MovePositions;
-	public GameObject PlayerGhost;
 	public GameObject ComputerGhost;
 	public bool MoveReady;
 
@@ -31,6 +30,10 @@ public class ComputerMovement : MonoBehaviour {
 
 	void MoveComputer(){
 		CheckAvailability();
+
+		// TODO: FindBestMoves(); 
+
+		//Check if computer can move
 		bool CanMove = false;
 		for (int i = 0; i < 4; i++){
 			if(DirectionsAvailable[i]==true){
@@ -42,85 +45,42 @@ public class ComputerMovement : MonoBehaviour {
 		if(MoveAvailable){
 			MoveReady = false;
 			do{
+				//get random direction 0-3, 0) Up, 1) Right, 2) Down, 3) Left
 				MoveDirection = Random.Range(0,4);
+				//if the computer can't move to that direction, a new direction is selected.
 				if(DirectionsAvailable[MoveDirection]==true){
-					WaitDone = false;
-					StartCoroutine(Waiting(5.0f));
 
+					//find all ghost-gameobjects and destroy them
 					GameObject[] Ghosts = GameObject.FindGameObjectsWithTag("Ghost");
 					if(Ghosts.Length>0){
 						for (int i = 0; i < Ghosts.Length; i++){
 							Destroy(Ghosts[i]);
 						}
 					}
-
+					//Move computer to selected position
 					do{
 						transform.position = Vector3.Lerp(transform.position, MovePositions[MoveDirection], 1);
+					//continue untill desired location is reached
 					}while(Vector3.Distance(transform.position , MovePositions[MoveDirection])>0);
 					MoveReady = true;
 					
 				}
 			}while(!MoveReady);
 		}
-
-		/*if(!UpR&&!DownR&&!LeftR&&!RightR){
-			CannotMove = true;
-		}else{
-			bool MoveReady = false;
-			do{
-				MoveDirection= (int)Random.Range(0.8f,4.2f);
-				switch(MoveDirection){
-					case 1:
-						if(UpR){
-							while(UpR){
-								transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x,transform.position.y +1.0f,transform.position.z),1);
-								CheckAvailability();
-							}
-							MoveReady=true;
-						}
-						break;
-					case 2:
-						if(DownR){
-							while(DownR){
-								transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x,transform.position.y -1.0f,transform.position.z),1);
-								CheckAvailability();
-							}
-							MoveReady=true;
-						}
-						break;
-					case 3:
-						if(LeftR){
-							while(LeftR){
-								transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x - 1.0f,transform.position.y,transform.position.z),1);
-								CheckAvailability();
-							}
-							MoveReady=true;
-						}
-						break;
-					case 4:
-						if(RightR){
-							while(RightR){
-								transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x +1.0f,transform.position.y,transform.position.z),1);
-								CheckAvailability();
-							}
-							MoveReady=true;
-						}
-						break;
-				}
-			}while(MoveReady==false);
-		}*/
 	}
 
-	void CheckAvailability(){
+	void CheckAvailability(){  //check for available movement directions
 		Collider[] hitcolliders;
-
+		//check Up direction
 		float step = 1.0f;
 		pos = new Vector3(transform.position.x,transform.position.y + step ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+		//If next space is blocked, this direction isn't available
 		if(hitcolliders.Length>0){
 			DirectionsAvailable[0] = false;
 			MovePositions[0]=Vector3.zero;
 		}else {
+			//Direction is available, so we need to find the last available spot in this direction
 			DirectionsAvailable[0] = true;
 			do{
 				MovePositions[0]=pos;
@@ -128,10 +88,11 @@ public class ComputerMovement : MonoBehaviour {
 				pos = new Vector3(transform.position.x,transform.position.y + step ,transform.position.z);
 				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
 			}while(hitcolliders.Length==0);
+			//Generate a ghost-object in this position for clarity.
 			GameObject.Instantiate(ComputerGhost,MovePositions[0],transform.rotation);
 			
 		}
-
+		//Check Down direction
 		step = 1.0f;
 		pos = new Vector3(transform.position.x,transform.position.y - step ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
@@ -149,7 +110,7 @@ public class ComputerMovement : MonoBehaviour {
 			GameObject.Instantiate(ComputerGhost,MovePositions[2],transform.rotation);
 			
 		}
-
+		//Check Left Direction
 		step = 1.0f;
 		pos = new Vector3(transform.position.x - step,transform.position.y ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
@@ -167,7 +128,7 @@ public class ComputerMovement : MonoBehaviour {
 			GameObject.Instantiate(ComputerGhost,MovePositions[3],transform.rotation);
 			
 		}
-
+		//Check Right Direction
 		step = 1.0f;
 		pos = new Vector3(transform.position.x + step,transform.position.y ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);	
@@ -185,5 +146,9 @@ public class ComputerMovement : MonoBehaviour {
 			GameObject.Instantiate(ComputerGhost,MovePositions[1],transform.rotation);
 			
 		}
+		/* TODO:
+		void FindBestMoves(){
+
+		}*/
 	}
 }
