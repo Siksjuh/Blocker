@@ -3,18 +3,19 @@ using System.Collections;
 
 public class ComputerMovement : MonoBehaviour {
 	public bool ComputerTurn;
-	public static bool CannotMove;
+	public bool MoveAvailable;
 	public bool[] DirectionsAvailable;
 	public Vector3[] MovePositions;
 	public GameObject PlayerGhost;
 	public GameObject ComputerGhost;
+	public bool MoveReady;
 
 	public Vector3 pos;
 	private int MoveDirection; //0 = Up, 1 = Right, 2 = Down, 3 = Left
 
 	// Use this for initialization
 	void Start () {
-		CannotMove = false;
+		MoveAvailable = true;
 		ComputerTurn = false;
 		DirectionsAvailable = new bool[4];
 		MovePositions = new Vector3[4];
@@ -30,6 +31,38 @@ public class ComputerMovement : MonoBehaviour {
 
 	void MoveComputer(){
 		CheckAvailability();
+		bool CanMove = false;
+		for (int i = 0; i < 4; i++){
+			if(DirectionsAvailable[i]==true){
+				CanMove = true;
+			}
+		}
+		MoveAvailable = CanMove;
+
+		if(MoveAvailable){
+			MoveReady = false;
+			do{
+				MoveDirection = Random.Range(0,4);
+				if(DirectionsAvailable[MoveDirection]==true){
+					WaitDone = false;
+					StartCoroutine(Waiting(5.0f));
+
+					GameObject[] Ghosts = GameObject.FindGameObjectsWithTag("Ghost");
+					if(Ghosts.Length>0){
+						for (int i = 0; i < Ghosts.Length; i++){
+							Destroy(Ghosts[i]);
+						}
+					}
+
+					do{
+						transform.position = Vector3.Lerp(transform.position, MovePositions[MoveDirection], 1);
+					}while(Vector3.Distance(transform.position , MovePositions[MoveDirection])>0);
+					MoveReady = true;
+					
+				}
+			}while(!MoveReady);
+		}
+
 		/*if(!UpR&&!DownR&&!LeftR&&!RightR){
 			CannotMove = true;
 		}else{
@@ -79,13 +112,6 @@ public class ComputerMovement : MonoBehaviour {
 	}
 
 	void CheckAvailability(){
-		GameObject[] Ghosts = GameObject.FindGameObjectsWithTag("Ghost");
-		if(Ghosts.Length>0){
-			for (int i = 0; i < Ghosts.Length; i++){
-				Destroy(Ghosts[i]);
-			}
-		}
-
 		Collider[] hitcolliders;
 
 		float step = 1.0f;
