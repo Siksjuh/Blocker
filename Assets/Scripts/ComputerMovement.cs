@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class ComputerMovement : MonoBehaviour {
-	public bool ComputerTurn; //temporary variable for testing
+	//public bool ComputerTurn; //temporary variable for testing
 	public bool MoveAvailable;
 	public bool[] DirectionsAvailable;
 	public Vector3[] MovePositions;
@@ -12,11 +12,11 @@ public class ComputerMovement : MonoBehaviour {
 	public Vector3 pos;
 	private int MoveDirection; //0 = Up, 1 = Right, 2 = Down, 3 = Left
 	public bool ComputerActive;
+	public static bool ComputerTurn;
 
 	// Use this for initialization
 	void Start () {
 		MoveAvailable = true;
-		ComputerTurn = false;
 		ComputerActive = false;
 		DirectionsAvailable = new bool[4];
 		MovePositions = new Vector3[4];
@@ -24,12 +24,9 @@ public class ComputerMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(ComputerTurn == true && ComputerActive == false){
+		if (ComputerTurn == true && ComputerActive == false){
+			ComputerTurn = false;
 			CalculateMove();
-			ComputerTurn=false;
-			//Start computer movement
-			ComputerActive = true;
-			Timer=0.0f;
 		}
 		if(ComputerActive==true){
 			Timer+=Time.deltaTime;
@@ -43,6 +40,7 @@ public class ComputerMovement : MonoBehaviour {
 					transform.position = MovePositions[MoveDirection];
 					//End Computer turn
 					ComputerActive=false;
+					TurnHandler.ComputerTurnComplete = true;
 				}
 			}
 		}
@@ -82,6 +80,8 @@ public class ComputerMovement : MonoBehaviour {
 				}
 			}while(!MoveReady);
 		}
+		ComputerActive = true;
+		Timer=0.0f;
 	}
 
 	void CheckAvailability(){  //check for available movement directions
