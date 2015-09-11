@@ -38,7 +38,7 @@ public class ComputerMovement : MonoBehaviour {
 				//remove all ghost objects
 				DestroyGhosts();
 				transform.position = Vector3.Lerp(transform.position, MovePositions[MoveDirection], Time.deltaTime*5);
-				if(transform.position==MovePositions[MoveDirection]){
+				if(Vector3.Distance(transform.position,MovePositions[MoveDirection])<0.1f){
 					//Comparison isn't accurate, so we make sure that Computer stops at the exact location
 					transform.position = MovePositions[MoveDirection];
 					//End Computer turn
