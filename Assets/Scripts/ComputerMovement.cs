@@ -8,27 +8,56 @@ public class ComputerMovement : MonoBehaviour {
 	public Vector3[] MovePositions;
 	public GameObject ComputerGhost;
 	public bool MoveReady;
-
+	public float Timer;
 	public Vector3 pos;
 	private int MoveDirection; //0 = Up, 1 = Right, 2 = Down, 3 = Left
+	public bool ComputerActive;
 
 	// Use this for initialization
 	void Start () {
 		MoveAvailable = true;
 		ComputerTurn = false;
+		ComputerActive = false;
 		DirectionsAvailable = new bool[4];
 		MovePositions = new Vector3[4];
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(ComputerTurn == true){
-			MoveComputer();
+		if(ComputerTurn == true && ComputerActive == false){
+			CalculateMove();
 			ComputerTurn=false;
+			//Start computer movement
+			ComputerActive = true;
+			Timer=0.0f;
+		}
+		if(ComputerActive==true){
+			Timer+=Time.deltaTime;
+			//3s delay before computer moves. Simulates "thinking".
+			if(Timer>3.0f){
+				//remove all ghost objects
+				DestroyGhosts();
+				transform.position = Vector3.Lerp(transform.position, MovePositions[MoveDirection], Time.deltaTime*5);
+				if(transform.position==MovePositions[MoveDirection]){
+					//Comparison isn't accurate, so we make sure that Computer stops at the exact location
+					transform.position = MovePositions[MoveDirection];
+					//End Computer turn
+					ComputerActive=false;
+				}
+			}
 		}
 	}
+	//Destroy All Ghost-gameobjects
+	void DestroyGhosts(){
+		GameObject[] Ghosts = GameObject.FindGameObjectsWithTag("Ghost");
+			if(Ghosts.Length>0){
+				for (int i = 0; i < Ghosts.Length; i++){
+					Destroy(Ghosts[i]);
+				}
+			}
+	}
 
-	void MoveComputer(){
+	void CalculateMove(){
 		CheckAvailability();
 
 		// TODO: FindBestMoves(); 
@@ -49,21 +78,7 @@ public class ComputerMovement : MonoBehaviour {
 				MoveDirection = Random.Range(0,4);
 				//if the computer can't move to that direction, a new direction is selected.
 				if(DirectionsAvailable[MoveDirection]==true){
-
-					//find all ghost-gameobjects and destroy them
-					GameObject[] Ghosts = GameObject.FindGameObjectsWithTag("Ghost");
-					if(Ghosts.Length>0){
-						for (int i = 0; i < Ghosts.Length; i++){
-							Destroy(Ghosts[i]);
-						}
-					}
-					//Move computer to selected position
-					do{
-						transform.position = Vector3.Lerp(transform.position, MovePositions[MoveDirection], 1);
-					//continue untill desired location is reached
-					}while(Vector3.Distance(transform.position , MovePositions[MoveDirection])>0);
-					MoveReady = true;
-					
+					MoveReady = true;				
 				}
 			}while(!MoveReady);
 		}
