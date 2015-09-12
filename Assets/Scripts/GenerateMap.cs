@@ -8,9 +8,13 @@ public GameObject CubeW;
 public GameObject Border;
 public GameObject Player;
 public GameObject Computer;
+public GameObject WallVertical;
+public GameObject WallHorizontal;
 public Vector3 pos;
 public Vector3[] positions;
 public bool ready;
+public Vector3[] verticalWalls;
+public Vector3[] horizontalWalls;
 
 
 
@@ -33,14 +37,19 @@ public bool ready;
 				}
 			}
 		}
+
+
+		generateWalls ();
+
+
 		//Generate random positions for Computer and Player objects.
-		positions[0] = GeneratePosition();
+		positions[0] = GeneratePosition(0);
 		GameObject.Instantiate(Computer,positions[0],transform.rotation);
 		for (int k=1;k<4;k++){
 			do 
 			{
 				ready = true;
-				positions[k] = GeneratePosition();
+				positions[k] = GeneratePosition(0);
 				//Check if the space is occupied
 				for (int l=0;l<k;l++){
 					if(positions[k]==positions[l]){
@@ -58,10 +67,48 @@ public bool ready;
 	}
 
 	//Generates random position on the board
-	Vector3 GeneratePosition(){
-		return new Vector3((int)Random.Range(-7, 7),(int)Random.Range(-7,7),-1);
+	Vector3 GeneratePosition(int wallPos){
+		Vector3 retVec = Vector3.zero;
+		if (wallPos != 0) {
+			if(wallPos == 1)
+				retVec = new Vector3 (.5f + (int)Random.Range (-7, 7), (int)Random.Range (-7, 7), -1);
+			if(wallPos == 2)
+				retVec = new Vector3 ((int)Random.Range (-7, 7), .5f +(int)Random.Range (-7, 7), -1);
+		} else {
+			retVec = new Vector3 ((int)Random.Range (-7, 7), (int)Random.Range (-7, 7), -1);
+		}
+		return retVec;
 	}
 
+
+
+	void generateWalls(){
+
+		verticalWalls = new Vector3[23];
+		horizontalWalls = new Vector3[23];
+
+		for(int i = 0; i < 23; i++){
+		AgainV:
+			verticalWalls[i] = GeneratePosition(1);
+			for(int j = 0; j < i; j++){
+				if(verticalWalls[j] == verticalWalls[i]){
+					goto AgainV;
+				}
+			}
+
+		AgainH:
+				horizontalWalls[i] = GeneratePosition(2);
+			for(int j = 0; j < i; j++){
+				if(horizontalWalls[j] == horizontalWalls[i]){
+					goto AgainH;
+				}
+			}
+
+			GameObject.Instantiate(WallVertical, verticalWalls[i], transform.rotation);
+			GameObject.Instantiate(WallHorizontal, horizontalWalls[i], transform.rotation);
+		}
+
+	}
 
 
 }

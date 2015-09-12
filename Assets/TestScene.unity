@@ -205,9 +205,13 @@ MonoBehaviour:
   Border: {fileID: 181072, guid: ac760f073f21ff34b8abead646c37182, type: 2}
   Player: {fileID: 152608, guid: b192b495f54e02c40b23616980338ebb, type: 2}
   Computer: {fileID: 141878, guid: 35ea5b22b7adf6e48a565abf00a45853, type: 2}
+  WallVertical: {fileID: 186496, guid: c0e5bda86abbcf94c8b53c8c620093d1, type: 2}
+  WallHorizontal: {fileID: 182514, guid: 7d412fbab2de7dc4f943cc772364369d, type: 2}
   pos: {x: 0, y: 0, z: 0}
   positions: []
   ready: 0
+  verticalWalls: []
+  horizontalWalls: []
 --- !u!4 &673581653
 Transform:
   m_ObjectHideFlags: 0
@@ -231,6 +235,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0f5a99c580b1dd49894c0f5faf65e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerToggle: 0
+  TurnCanvas: {fileID: 0}
+  TurnText: {fileID: 0}
 --- !u!1 &985579195
 GameObject:
   m_ObjectHideFlags: 0
