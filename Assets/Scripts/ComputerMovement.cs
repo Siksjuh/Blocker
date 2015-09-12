@@ -2,116 +2,168 @@
 using System.Collections;
 
 public class ComputerMovement : MonoBehaviour {
-	public bool ComputerTurn;
-	public static bool CannotMove;
-
-	public bool UpR;
-	public bool DownR;
-	public bool LeftR;
-	public bool RightR;
+	//public bool ComputerTurn; //temporary variable for testing
+	public bool MoveAvailable;
+	public bool[] DirectionsAvailable;
+	public Vector3[] MovePositions;
+	public GameObject ComputerGhost;
+	public bool MoveReady;
+	public float Timer;
 	public Vector3 pos;
-	private int MoveDirection;
+	private int MoveDirection; //0 = Up, 1 = Right, 2 = Down, 3 = Left
+	public bool ComputerActive;
+	public static bool ComputerTurn;
 
 	// Use this for initialization
 	void Start () {
-		CannotMove = false;
-		ComputerTurn = false;
+		MoveAvailable = true;
+		ComputerActive = false;
+		DirectionsAvailable = new bool[4];
+		MovePositions = new Vector3[4];
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(ComputerTurn == true){
-			MoveComputer();
-			ComputerTurn=false;
+		if (ComputerTurn == true && ComputerActive == false){
+			ComputerTurn = false;
+			CalculateMove();
 		}
-	}
-
-	void MoveComputer(){
-		CheckAvailability();
-		if(!UpR&&!DownR&&!LeftR&&!RightR){
-			CannotMove = true;
-		}else{
-			bool MoveReady = false;
-			do{
-				MoveDirection= (int)Random.Range(0.8f,4.2f);
-				switch(MoveDirection){
-					case 1:
-						if(UpR){
-							while(UpR){
-								transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x,transform.position.y +1.0f,transform.position.z),1);
-								CheckAvailability();
-							}
-							MoveReady=true;
-						}
-						break;
-					case 2:
-						if(DownR){
-							while(DownR){
-								transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x,transform.position.y -1.0f,transform.position.z),1);
-								CheckAvailability();
-							}
-							MoveReady=true;
-						}
-						break;
-					case 3:
-						if(LeftR){
-							while(LeftR){
-								transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x - 1.0f,transform.position.y,transform.position.z),1);
-								CheckAvailability();
-							}
-							MoveReady=true;
-						}
-						break;
-					case 4:
-						if(RightR){
-							while(RightR){
-								transform.position = Vector3.Lerp(transform.position,new Vector3(transform.position.x +1.0f,transform.position.y,transform.position.z),1);
-								CheckAvailability();
-							}
-							MoveReady=true;
-						}
-						break;
+		if(ComputerActive==true){
+			Timer+=Time.deltaTime;
+			//3s delay before computer moves. Simulates "thinking".
+			if(Timer>3.0f){
+				//remove all ghost objects
+				DestroyGhosts();
+				transform.position = Vector3.Lerp(transform.position, MovePositions[MoveDirection], Time.deltaTime*5);
+				if(Vector3.Distance(transform.position,MovePositions[MoveDirection])<0.1f){
+					//Comparison isn't accurate, so we make sure that Computer stops at the exact location
+					transform.position = MovePositions[MoveDirection];
+					//End Computer turn
+					ComputerActive=false;
+					TurnHandler.ComputerTurnComplete = true;
 				}
-			}while(MoveReady==false);
+			}
 		}
 	}
+	//Destroy All Ghost-gameobjects
+	void DestroyGhosts(){
+		GameObject[] Ghosts = GameObject.FindGameObjectsWithTag("Ghost");
+			if(Ghosts.Length>0){
+				for (int i = 0; i < Ghosts.Length; i++){
+					Destroy(Ghosts[i]);
+				}
+			}
+	}
 
-	void CheckAvailability(){
+	void CalculateMove(){
+		CheckAvailability();
+
+		// TODO: FindBestMoves(); 
+
+		//Check if computer can move
+		bool CanMove = false;
+		for (int i = 0; i < 4; i++){
+			if(DirectionsAvailable[i]==true){
+				CanMove = true;
+			}
+		}
+		MoveAvailable = CanMove;
+
+		if(MoveAvailable){
+			MoveReady = false;
+			do{
+				//get random direction 0-3, 0) Up, 1) Right, 2) Down, 3) Left
+				MoveDirection = Random.Range(0,4);
+				//if the computer can't move to that direction, a new direction is selected.
+				if(DirectionsAvailable[MoveDirection]==true){
+					MoveReady = true;				
+				}
+			}while(!MoveReady);
+		}
+		ComputerActive = true;
+		Timer=0.0f;
+	}
+
+	void CheckAvailability(){  //check for available movement directions
 		Collider[] hitcolliders;
-
-		pos = new Vector3(transform.position.x,transform.position.y + 1.0f ,transform.position.z);
+		//check Up direction
+		float step = 1.0f;
+		pos = new Vector3(transform.position.x,transform.position.y + step ,transform.position.z);
+		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+		//If next space is blocked, this direction isn't available
+		if(hitcolliders.Length>0){
+			DirectionsAvailable[0] = false;
+			MovePositions[0]=Vector3.zero;
+		}else {
+			//Direction is available, so we need to find the last available spot in this direction
+			DirectionsAvailable[0] = true;
+			do{
+				MovePositions[0]=pos;
+				step += 1.0f;
+				pos = new Vector3(transform.position.x,transform.position.y + step ,transform.position.z);
+				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+			}while(hitcolliders.Length==0);
+			//Generate a ghost-object in this position for clarity.
+			GameObject.Instantiate(ComputerGhost,MovePositions[0],transform.rotation);
+			
+		}
+		//Check Down direction
+		step = 1.0f;
+		pos = new Vector3(transform.position.x,transform.position.y - step ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
 		if(hitcolliders.Length>0){
-			UpR = false;
+			DirectionsAvailable[2] = false;
+			MovePositions[2]=Vector3.zero;
 		}else {
-			UpR = true;
+			DirectionsAvailable[2] = true;
+			do{
+				MovePositions[2]=pos;
+				step += 1.0f;
+				pos = new Vector3(transform.position.x,transform.position.y - step ,transform.position.z);
+				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+			}while(hitcolliders.Length==0);
+			GameObject.Instantiate(ComputerGhost,MovePositions[2],transform.rotation);
+			
 		}
-		
-		pos = new Vector3(transform.position.x,transform.position.y - 1.0f ,transform.position.z);
+		//Check Left Direction
+		step = 1.0f;
+		pos = new Vector3(transform.position.x - step,transform.position.y ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
-		if(hitcolliders.Length>0){ 
-			DownR = false;
+		if(hitcolliders.Length>0){
+			DirectionsAvailable[3] = false;
+			MovePositions[3]=Vector3.zero;
+		}else {
+			DirectionsAvailable[3] = true;
+			do{
+				MovePositions[3]=pos;
+				step += 1.0f;
+				pos = new Vector3(transform.position.x - step,transform.position.y ,transform.position.z);
+				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+			}while(hitcolliders.Length==0);
+			GameObject.Instantiate(ComputerGhost,MovePositions[3],transform.rotation);
+			
 		}
-		else {
-			DownR = true;
-		}
-
-		pos = new Vector3(transform.position.x - 1.0f,transform.position.y ,transform.position.z);
-		hitcolliders = Physics.OverlapSphere(pos, 0.4f);
-		if(hitcolliders.Length>0) {
-			LeftR = false;
-		}
-		else {
-			LeftR = true;
-		}
-
-		pos = new Vector3(transform.position.x + 1.0f,transform.position.y ,transform.position.z);
+		//Check Right Direction
+		step = 1.0f;
+		pos = new Vector3(transform.position.x + step,transform.position.y ,transform.position.z);
 		hitcolliders = Physics.OverlapSphere(pos, 0.4f);	
-		if(hitcolliders.Length>0) {
-			RightR = false;
+		if(hitcolliders.Length>0){
+			DirectionsAvailable[1] = false;
+			MovePositions[1]=Vector3.zero;
+		}else {
+			DirectionsAvailable[1] = true;
+			do{
+				MovePositions[1]=pos;
+				step += 1.0f;
+				pos = new Vector3(transform.position.x + step,transform.position.y ,transform.position.z);
+				hitcolliders = Physics.OverlapSphere(pos, 0.4f);
+			}while(hitcolliders.Length==0);
+			GameObject.Instantiate(ComputerGhost,MovePositions[1],transform.rotation);
+			
 		}
-		else {
-			RightR = true;
-		}
+		/* TODO:
+		void FindBestMoves(){
+
+		}*/
 	}
 }
