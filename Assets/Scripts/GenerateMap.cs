@@ -11,7 +11,7 @@ public GameObject Computer;
 public GameObject WallVertical;
 public GameObject WallHorizontal;
 public Vector3 pos;
-public Vector3[] positions;
+public GameObject[] positions;
 public bool ready;
 public Vector3[] verticalWalls;
 public Vector3[] horizontalWalls;
@@ -20,7 +20,7 @@ public Vector3[] horizontalWalls;
 
 	// Use this for initialization
 	void Start () {
-		positions = new Vector3[4];
+		positions = new GameObject[4];
 
 		//Generate The board. 15x15 board, borders around, checkerboard style
 		for (int i=-8;i<=8;i++){
@@ -43,22 +43,23 @@ public Vector3[] horizontalWalls;
 
 
 		//Generate random positions for Computer and Player objects.
-		positions[0] = GeneratePosition(0);
-		GameObject.Instantiate(Computer,positions[0],transform.rotation);
+		positions[0] = (GameObject)GameObject.Instantiate(Computer,GeneratePosition(0),transform.rotation);
+
 		for (int k=1;k<4;k++){
+			Vector3 genSpot;
 			do 
 			{
 				ready = true;
-				positions[k] = GeneratePosition(0);
+				genSpot = GeneratePosition(0);
 				//Check if the space is occupied
 				for (int l=0;l<k;l++){
-					if(positions[k]==positions[l]){
+					if(genSpot==positions[l].transform.position){
 						ready=false;
 					}
 				}
 			}while(!ready);
 			
-			GameObject.Instantiate(Player,positions[k],transform.rotation);
+			positions[k] = (GameObject)GameObject.Instantiate(Player,genSpot,transform.rotation);
 		}
 	}
 	

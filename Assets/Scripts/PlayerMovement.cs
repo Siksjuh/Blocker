@@ -55,6 +55,10 @@ public class PlayerMovement : MonoBehaviour {
 				if (test.y > transform.position.y && test.x == retVec.x && test.y < retVec.y) {
 					retVec.y = test.y -.5f;
 				}
+			} for (int i = 0; i < layout.positions.Length; i++){
+				Vector3 test = layout.positions[i].transform.position;
+				if(test.x == retVec.x && test.y > transform.position.y && test.y < retVec.y)
+					retVec.y = test.y-1;
 			}
 		}
 
@@ -66,6 +70,10 @@ public class PlayerMovement : MonoBehaviour {
 				if (test.y < transform.position.y && test.x == retVec.x && test.y > retVec.y) {
 					retVec.y = test.y +.5f;
 				}
+			}for (int i = 0; i < layout.positions.Length; i++){
+				Vector3 test = layout.positions[i].transform.position;
+				if(test.x == retVec.x && test.y < transform.position.y && test.y > retVec.y)
+					retVec.y = test.y+1;
 			}
 		}
 
@@ -77,6 +85,10 @@ public class PlayerMovement : MonoBehaviour {
 				if (test.x > transform.position.x && test.y == retVec.y && test.x < retVec.x) {
 					retVec.x = test.x -.5f;
 				}
+			}for (int i = 0; i < layout.positions.Length; i++){
+				Vector3 test = layout.positions[i].transform.position;
+				if(test.y == retVec.y && test.x > transform.position.x && test.x < retVec.x)
+					retVec.x = test.x-1;
 			}
 		}
 
@@ -88,6 +100,10 @@ public class PlayerMovement : MonoBehaviour {
 				if (test.x < transform.position.x && test.y == retVec.y && test.x > retVec.x) {
 					retVec.x = test.x +.5f;
 				}
+			}for (int i = 0; i < layout.positions.Length; i++){
+				Vector3 test = layout.positions[i].transform.position;
+				if(test.y == retVec.y && test.x < transform.position.x && test.x > retVec.x)
+					retVec.x = test.x+1;
 			}
 		}
 
