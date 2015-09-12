@@ -71,9 +71,9 @@ public Vector3[] horizontalWalls;
 		Vector3 retVec = Vector3.zero;
 		if (wallPos != 0) {
 			if(wallPos == 1)
-				retVec = new Vector3 (.5f + (int)Random.Range (-7, 7), (int)Random.Range (-7, 7), -1);
+				retVec = new Vector3 (.5f + (int)Random.Range (-7, 7), (int)Random.Range (-7, 8), -1);
 			if(wallPos == 2)
-				retVec = new Vector3 ((int)Random.Range (-7, 7), .5f +(int)Random.Range (-7, 7), -1);
+				retVec = new Vector3 ((int)Random.Range (-7, 8), .5f +(int)Random.Range (-7, 7), -1);
 		} else {
 			retVec = new Vector3 ((int)Random.Range (-7, 7), (int)Random.Range (-7, 7), -1);
 		}
@@ -84,10 +84,10 @@ public Vector3[] horizontalWalls;
 
 	void generateWalls(){
 
-		verticalWalls = new Vector3[23];
-		horizontalWalls = new Vector3[23];
+		verticalWalls = new Vector3[27];
+		horizontalWalls = new Vector3[27];
 
-		for(int i = 0; i < 23; i++){
+		for(int i = 0; i < 27; i++){
 		AgainV:
 			verticalWalls[i] = GeneratePosition(1);
 			for(int j = 0; j < i; j++){
