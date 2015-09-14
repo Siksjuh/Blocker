@@ -24,10 +24,12 @@ public class ComputerMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (ComputerTurn == true && ComputerActive == false){
+		
+		if (ComputerTurn == true){
 			ComputerTurn = false;
 			CalculateMove();
 		}
+		
 		if(ComputerActive==true){
 			CompTimer+=Time.deltaTime;
 			//3s delay before computer moves. Simulates "thinking".
