@@ -89,6 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06a74d2c8d3fa444990e064b3c4af544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spotMarker: {fileID: 120388, guid: 260530cde7f8d72428e5ac5e5fe04aa4, type: 2}
 --- !u!135 &13562840
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -120,6 +121,10 @@ Prefab:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: spotMarker
+      value: 
+      objectReference: {fileID: 120388, guid: 260530cde7f8d72428e5ac5e5fe04aa4, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 152608}
