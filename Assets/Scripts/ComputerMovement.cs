@@ -97,7 +97,8 @@ public class ComputerMovement : MonoBehaviour {
 				hitcolliders = Physics.OverlapSphere(pos, 0.1f);
 			}while(hitcolliders.Length==0);
 			//Generate a ghost-object in this position for clarity.
-			GameObject.Instantiate(ComputerGhost,MovePositions[0],transform.rotation);
+			GameObject Ghost = Instantiate(ComputerGhost,MovePositions[0],transform.rotation)as GameObject;
+			Ghost.name = "GhostUp";
 		}
 
 		//Check Down direction
@@ -114,7 +115,8 @@ public class ComputerMovement : MonoBehaviour {
 				pos = new Vector3(transform.position.x,transform.position.y - step ,transform.position.z);
 				hitcolliders = Physics.OverlapSphere(pos, 0.1f);
 			}while(hitcolliders.Length==0);
-			GameObject.Instantiate(ComputerGhost,MovePositions[2],transform.rotation);
+			GameObject Ghost = Instantiate(ComputerGhost,MovePositions[2],transform.rotation)as GameObject;
+			Ghost.name = "GhostDown";
 		}
 
 		//Check Left Direction
@@ -132,7 +134,8 @@ public class ComputerMovement : MonoBehaviour {
 				pos = new Vector3(transform.position.x - step,transform.position.y ,transform.position.z);
 				hitcolliders = Physics.OverlapSphere(pos, 0.1f);
 			}while(hitcolliders.Length==0);
-			GameObject.Instantiate(ComputerGhost,MovePositions[3],transform.rotation);
+			GameObject Ghost = Instantiate(ComputerGhost,MovePositions[3],transform.rotation)as GameObject;
+			Ghost.name = "GhostLeft";
 		}
 		
 		//Check Right Direction
@@ -149,8 +152,11 @@ public class ComputerMovement : MonoBehaviour {
 				pos = new Vector3(transform.position.x + step,transform.position.y ,transform.position.z);
 				hitcolliders = Physics.OverlapSphere(pos, 0.1f);
 			}while(hitcolliders.Length==0);
-		GameObject.Instantiate(ComputerGhost,MovePositions[1],transform.rotation);}
+		GameObject Ghost = Instantiate(ComputerGhost,MovePositions[1],transform.rotation) as GameObject;
+		Ghost.name = "GhostRight";
+	}
 		
+
 		bool temp = false;
 		for(int i = 0; i<4;i++){
 			if (MovePositions[i]==Vector3.zero){
