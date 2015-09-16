@@ -13,6 +13,8 @@ public class ComputerMovement : MonoBehaviour {
 	private int MoveDirection; //0 = Up, 1 = Right, 2 = Down, 3 = Left
 	public bool ComputerActive;
 	public static bool ComputerTurn;
+	public int MoveCounter;
+	public float ThinkTime;
 
 	// Use this for initialization
 	void Start () {
@@ -28,12 +30,18 @@ public class ComputerMovement : MonoBehaviour {
 		if (ComputerTurn == true){
 			ComputerTurn = false;
 			CalculateMove();
+			if(MoveCounter<2){
+				ThinkTime=1.0f;
+			}else{
+				ThinkTime=Random.Range(2.0f,5.0f);
+			}
 		}
+
 		
 		if(ComputerActive==true){
 			CompTimer+=Time.deltaTime;
 			//3s delay before computer moves. Simulates "thinking".
-			if(CompTimer>3.0f){
+			if(CompTimer>ThinkTime){
 				//remove all ghost objects
 				DestroyGhosts();
 				transform.position = Vector3.Lerp(transform.position, MovePositions[MoveDirection], Time.deltaTime*5);
@@ -158,10 +166,12 @@ public class ComputerMovement : MonoBehaviour {
 		
 
 		bool temp = false;
+		MoveCounter = 0;
 		for(int i = 0; i<4;i++){
 			if (MovePositions[i]==Vector3.zero){
 				DirectionsAvailable[i]=false;
 			}else{
+				MoveCounter ++;
 				DirectionsAvailable[i]=true;
 				temp = true;
 			}
