@@ -11,15 +11,21 @@ public class PlayerMovement : MonoBehaviour {
 	private Vector3 moveTo;
 	private Vector3 moveFrom;
 	private float timer;
+	private TurnHandler turnSignaler;
+	private bool computerTurn;
+	private bool moving;
 
 
 	// Use this for initialization
 	void Start () {
 		layout = GameObject.Find ("GameHandler").GetComponent<GenerateMap> ();
+		turnSignaler = GameObject.Find ("GameHandler").GetComponent<TurnHandler> ();
 		targetPositions = new GameObject[0];
 		layout.showingTargets = false;
 		moveTo = transform.position;
 		timer = 0;
+		computerTurn = true;
+		moving = false;
 	}
 	
 	// Update is called once per frame
@@ -28,32 +34,38 @@ public class PlayerMovement : MonoBehaviour {
 		if (moveTo != transform.position) {
 			timer += Time.deltaTime;
 			transform.position = Vector3.Lerp(moveFrom, moveTo, timer);
-			if(Vector3.Distance(transform.position, moveTo) < .2f)
+			if(Vector3.Distance(transform.position, moveTo) < .2f){
 				transform.position = moveTo;
+				computerTurn = true;
+				moving = false;
+				turnSignaler.PlayerTurnComplete = computerTurn;
+			}
 		} else {
 			timer = 0;
 			moveFrom = transform.position;
-		}
+		} if (computerTurn)
+			computerTurn = turnSignaler.PlayerActive;
 	}
 
 
 	//When the object is clicked
 	void OnMouseDown(){
 		
-
-		if (!showTargets) {
-			targetPositions = new GameObject[4];
-			//Checking possible destinations on mouseclick
-			for (int i = 0; i < 4; i++) {
-				Vector3 positionize = checkEndPoints (i);
-				if (positionize != transform.position) {
-					targetPositions [i] = (GameObject)GameObject.Instantiate (spotMarker, positionize, transform.rotation);
-					targetPositions[i].GetComponent<GhostActivity>().master = this;
+		if (!computerTurn && !moving) {
+			if (!showTargets) {
+				targetPositions = new GameObject[4];
+				//Checking possible destinations on mouseclick
+				for (int i = 0; i < 4; i++) {
+					Vector3 positionize = checkEndPoints (i);
+					if (positionize != transform.position) {
+						targetPositions [i] = (GameObject)GameObject.Instantiate (spotMarker, positionize, transform.rotation);
+						targetPositions [i].GetComponent<GhostActivity> ().master = this;
+					}
 				}
+				layout.showingTargets = true;
+			} else if (targetPositions.Length != 0) {
+				DestroyGhosts ();
 			}
-			layout.showingTargets = true;
-		} else if (targetPositions.Length != 0) {
-			DestroyGhosts ();
 		}
 	}
 
@@ -130,6 +142,7 @@ public class PlayerMovement : MonoBehaviour {
 	public void MoveToPoint (Vector3 to){
 		DestroyGhosts ();
 		moveTo = to;
+		moving = true;
 	}
 
 

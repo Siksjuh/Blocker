@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class TurnHandler : MonoBehaviour {
-	public static bool PlayerTurnComplete;
+	public bool PlayerTurnComplete;
 	public static bool ComputerTurnComplete;
 	public bool PlayerActive;
 	public bool ComputerActive;
@@ -57,8 +57,9 @@ public class TurnHandler : MonoBehaviour {
 		ComputerMovement.ComputerTurn=true;
 	}
 
+	/*
 	public void ButtonClick(){
 		PlayerCanvas.SetActive(false);
 		PlayerTurnComplete = true;
-	}
+	}*/
 }
