@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -7,37 +8,52 @@ public class PlayerMovement : MonoBehaviour {
 	private bool showTargets;
 	private GenerateMap layout;
 	public GameObject spotMarker;
+	private Vector3 moveTo;
+	private Vector3 moveFrom;
+	private float timer;
+
 
 	// Use this for initialization
 	void Start () {
-		targetPositions = new GameObject[4];
-		showTargets = false;
+		layout = GameObject.Find ("GameHandler").GetComponent<GenerateMap> ();
+		targetPositions = new GameObject[0];
+		layout.showingTargets = false;
+		moveTo = transform.position;
+		timer = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		showTargets = layout.showingTargets;
+		if (moveTo != transform.position) {
+			timer += Time.deltaTime;
+			transform.position = Vector3.Lerp(moveFrom, moveTo, timer);
+			if(Vector3.Distance(transform.position, moveTo) < .2f)
+				transform.position = moveTo;
+		} else {
+			timer = 0;
+			moveFrom = transform.position;
+		}
 	}
 
 
 	//When the object is clicked
 	void OnMouseDown(){
-
-		layout = GameObject.Find ("GameHandler").GetComponent<GenerateMap> ();
+		
 
 		if (!showTargets) {
+			targetPositions = new GameObject[4];
 			//Checking possible destinations on mouseclick
 			for (int i = 0; i < 4; i++) {
 				Vector3 positionize = checkEndPoints (i);
-				if (positionize != transform.position){
-					targetPositions[i] = (GameObject) GameObject.Instantiate (spotMarker, positionize, transform.rotation);
+				if (positionize != transform.position) {
+					targetPositions [i] = (GameObject)GameObject.Instantiate (spotMarker, positionize, transform.rotation);
+					targetPositions[i].GetComponent<GhostActivity>().master = this;
 				}
 			}
-			showTargets = true;
-		} else {
-			for(int i = 0; i < 4; i++){
-				if(targetPositions[i])
-					Destroy(targetPositions[i]);
-			} showTargets = false;
+			layout.showingTargets = true;
+		} else if (targetPositions.Length != 0) {
+			DestroyGhosts ();
 		}
 	}
 
@@ -110,5 +126,20 @@ public class PlayerMovement : MonoBehaviour {
 		return retVec;
 
 	}
+
+	public void MoveToPoint (Vector3 to){
+		DestroyGhosts ();
+		moveTo = to;
+	}
+
+
+	public void DestroyGhosts(){
+			for(int i = 0; i < 4; i++){
+				if(targetPositions[i])
+					Destroy(targetPositions[i]);
+			} targetPositions = new GameObject[0];
+			layout.showingTargets = false;
+		}
+
 
 }

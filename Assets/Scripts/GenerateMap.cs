@@ -15,6 +15,7 @@ public GameObject[] positions;
 public bool ready;
 public Vector3[] verticalWalls;
 public Vector3[] horizontalWalls;
+public bool showingTargets;
 
 
 
