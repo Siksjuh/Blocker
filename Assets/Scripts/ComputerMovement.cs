@@ -13,6 +13,8 @@ public class ComputerMovement : MonoBehaviour {
 	private int MoveDirection; //0 = Up, 1 = Right, 2 = Down, 3 = Left
 	public bool ComputerActive;
 	public static bool ComputerTurn;
+	public int MoveCounter;
+	public float ThinkTime;
 
 	// Use this for initialization
 	void Start () {
@@ -24,14 +26,22 @@ public class ComputerMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (ComputerTurn == true && ComputerActive == false){
+		
+		if (ComputerTurn == true){
 			ComputerTurn = false;
 			CalculateMove();
+			if(MoveCounter<2){
+				ThinkTime=1.0f;
+			}else{
+				ThinkTime=Random.Range(2.0f,5.0f);
+			}
 		}
+
+		
 		if(ComputerActive==true){
 			CompTimer+=Time.deltaTime;
 			//3s delay before computer moves. Simulates "thinking".
-			if(CompTimer>3.0f){
+			if(CompTimer>ThinkTime){
 				//remove all ghost objects
 				DestroyGhosts();
 				transform.position = Vector3.Lerp(transform.position, MovePositions[MoveDirection], Time.deltaTime*5);
@@ -95,7 +105,8 @@ public class ComputerMovement : MonoBehaviour {
 				hitcolliders = Physics.OverlapSphere(pos, 0.1f);
 			}while(hitcolliders.Length==0);
 			//Generate a ghost-object in this position for clarity.
-			GameObject.Instantiate(ComputerGhost,MovePositions[0],transform.rotation);
+			GameObject Ghost = Instantiate(ComputerGhost,MovePositions[0],transform.rotation)as GameObject;
+			Ghost.name = "GhostUp";
 		}
 
 		//Check Down direction
@@ -112,7 +123,8 @@ public class ComputerMovement : MonoBehaviour {
 				pos = new Vector3(transform.position.x,transform.position.y - step ,transform.position.z);
 				hitcolliders = Physics.OverlapSphere(pos, 0.1f);
 			}while(hitcolliders.Length==0);
-			GameObject.Instantiate(ComputerGhost,MovePositions[2],transform.rotation);
+			GameObject Ghost = Instantiate(ComputerGhost,MovePositions[2],transform.rotation)as GameObject;
+			Ghost.name = "GhostDown";
 		}
 
 		//Check Left Direction
@@ -130,7 +142,8 @@ public class ComputerMovement : MonoBehaviour {
 				pos = new Vector3(transform.position.x - step,transform.position.y ,transform.position.z);
 				hitcolliders = Physics.OverlapSphere(pos, 0.1f);
 			}while(hitcolliders.Length==0);
-			GameObject.Instantiate(ComputerGhost,MovePositions[3],transform.rotation);
+			GameObject Ghost = Instantiate(ComputerGhost,MovePositions[3],transform.rotation)as GameObject;
+			Ghost.name = "GhostLeft";
 		}
 		
 		//Check Right Direction
@@ -147,13 +160,18 @@ public class ComputerMovement : MonoBehaviour {
 				pos = new Vector3(transform.position.x + step,transform.position.y ,transform.position.z);
 				hitcolliders = Physics.OverlapSphere(pos, 0.1f);
 			}while(hitcolliders.Length==0);
-		GameObject.Instantiate(ComputerGhost,MovePositions[1],transform.rotation);}
+		GameObject Ghost = Instantiate(ComputerGhost,MovePositions[1],transform.rotation) as GameObject;
+		Ghost.name = "GhostRight";
+	}
 		
+
 		bool temp = false;
+		MoveCounter = 0;
 		for(int i = 0; i<4;i++){
 			if (MovePositions[i]==Vector3.zero){
 				DirectionsAvailable[i]=false;
 			}else{
+				MoveCounter ++;
 				DirectionsAvailable[i]=true;
 				temp = true;
 			}
