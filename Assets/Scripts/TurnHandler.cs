@@ -10,7 +10,7 @@ public class TurnHandler : MonoBehaviour {
 
 	public GameObject TurnCanvas;
 	public Text TurnText;
-	public GameObject PlayerCanvas;
+	//public GameObject PlayerCanvas;
 
 	private float Timer;
 	// Use this for initialization
@@ -19,7 +19,7 @@ public class TurnHandler : MonoBehaviour {
 		TurnCanvas.SetActive(false);
 		PlayerTurnComplete = true;
 		ComputerTurnComplete = false;
-		PlayerCanvas.SetActive(false);
+		//PlayerCanvas.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -51,7 +51,7 @@ public class TurnHandler : MonoBehaviour {
 		}
 	}
 	void PlayerTurn(){
-		PlayerCanvas.SetActive(true);
+		//PlayerCanvas.SetActive(true);
 	}
 	void ComputerTurn(){
 		ComputerMovement.ComputerTurn=true;

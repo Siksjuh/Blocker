@@ -85,7 +85,7 @@ public class PlayerMovement : MonoBehaviour {
 				}
 			} for (int i = 0; i < layout.positions.Length; i++){
 				Vector3 test = layout.positions[i].transform.position;
-				if(test.x == retVec.x && test.y > transform.position.y && test.y < retVec.y)
+				if(test.x == retVec.x && test.y > transform.position.y && test.y <= retVec.y)
 					retVec.y = test.y-1;
 			}
 		}
@@ -100,7 +100,7 @@ public class PlayerMovement : MonoBehaviour {
 				}
 			}for (int i = 0; i < layout.positions.Length; i++){
 				Vector3 test = layout.positions[i].transform.position;
-				if(test.x == retVec.x && test.y < transform.position.y && test.y > retVec.y)
+				if(test.x == retVec.x && test.y < transform.position.y && test.y >= retVec.y)
 					retVec.y = test.y+1;
 			}
 		}
@@ -115,7 +115,7 @@ public class PlayerMovement : MonoBehaviour {
 				}
 			}for (int i = 0; i < layout.positions.Length; i++){
 				Vector3 test = layout.positions[i].transform.position;
-				if(test.y == retVec.y && test.x > transform.position.x && test.x < retVec.x)
+				if(test.y == retVec.y && test.x > transform.position.x && test.x <= retVec.x)
 					retVec.x = test.x-1;
 			}
 		}
@@ -130,7 +130,7 @@ public class PlayerMovement : MonoBehaviour {
 				}
 			}for (int i = 0; i < layout.positions.Length; i++){
 				Vector3 test = layout.positions[i].transform.position;
-				if(test.y == retVec.y && test.x < transform.position.x && test.x > retVec.x)
+				if(test.y == retVec.y && test.x < transform.position.x && test.x >= retVec.x)
 					retVec.x = test.x+1;
 			}
 		}
