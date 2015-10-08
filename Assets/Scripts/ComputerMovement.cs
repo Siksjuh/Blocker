@@ -16,6 +16,7 @@ public class ComputerMovement : MonoBehaviour {
 	public int MoveCounter;
 	public float ThinkTime;
 	public int[] MoveValue;
+	public bool Obstacles;
 
 	// Use this for initialization
 	void Start () {
@@ -108,17 +109,20 @@ public class ComputerMovement : MonoBehaviour {
 		for(int i = 0; i < 4; i++){
 			MoveValue[i] = 100;
 			if(DirectionsAvailable[i]==true){
-				hitcolliders = Physics.OverlapSphere(MovePositions[i],0.5f);
+				hitcolliders = Physics.OverlapSphere(MovePositions[i],0.55f);
 				if(hitcolliders.Length>=3){
 					MoveValue[i] -= 60;
 				}else if(hitcolliders.Length==2){
-					MoveValue[i] -= 30;
+					MoveValue[i] -= 40;
+				}else if(hitcolliders.Length==1){
+					MoveValue[i] -= 20;
 				}
 			GameObject[] Players = GameObject.FindGameObjectsWithTag("Player");
 			for(int j = 0; j<Players.Length;j++){
 				int start, stop;
-				bool Obstacles = false;
+ 				Obstacles = true;
 				if(Players[j].transform.position.y == MovePositions[i].y){
+					Obstacles = false;
 					if(Players[j].transform.position.x>MovePositions[i].x){
 						start = (int)MovePositions[i].x;
 						stop = (int)Players[j].transform.position.x;
@@ -126,7 +130,7 @@ public class ComputerMovement : MonoBehaviour {
 						stop = (int)MovePositions[i].x;
 						start = (int)Players[j].transform.position.x;
 					}
-					for(float k = start;k<stop;k+=0.5f){
+					for(float k = start+0.5f;k<stop;k+=0.5f){
 						hitcolliders = Physics.OverlapSphere(new Vector3(k, MovePositions[i].y, -1),0.05f);
 						if(hitcolliders.Length>1){
 							Obstacles = true;
@@ -134,15 +138,12 @@ public class ComputerMovement : MonoBehaviour {
 							GameObject go = hitcolliders[0].gameObject;
 							if(go.tag != "Computer"){
 								Obstacles = true;
-								Debug.Log("sadasd");
 							}
-						}
-						for (int x= 0;x< hitcolliders.Length;x++){
-							if (hitcolliders[x].gameObject.tag == "Computer") Debug.Log("Computer found");
 						}
 					}
 
 				}else if(Players[j].transform.position.x==MovePositions[i].x){
+					Obstacles = false;
 					if(Players[j].transform.position.y>MovePositions[i].y){
 						start = (int)MovePositions[i].y;
 						stop = (int)Players[j].transform.position.y;
@@ -150,7 +151,7 @@ public class ComputerMovement : MonoBehaviour {
 						stop = (int)MovePositions[i].y;
 						start = (int)Players[j].transform.position.y;
 					}
-					for(float k = start;k<stop;k+=0.5f){
+					for(float k = start+0.5f;k<stop;k+=0.5f){
 						hitcolliders = Physics.OverlapSphere(new Vector3(MovePositions[i].x, k, -1),0.05f);
 						if(hitcolliders.Length>1){
 							Obstacles = true;
@@ -158,14 +159,14 @@ public class ComputerMovement : MonoBehaviour {
 							GameObject go = hitcolliders[0].gameObject;
 							if(go.tag != "Computer"){
 								Obstacles = true;
-								Debug.Log("Asdasda");
 							}
 						}
 					}
 				}
 
-				if(Obstacles == true){
-					MoveValue[i] -= 20;
+				if(Obstacles == false){
+					MoveValue[i] -= 25;
+					Debug.Log("-25 points to "+i+", total: "+MoveValue[i]);
 				}
 			}
 			}else{
