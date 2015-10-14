@@ -166,11 +166,11 @@ public class ComputerMovement : MonoBehaviour {
 
 				if(Obstacles == false){
 					MoveValue[i] -= 25;
-					Debug.Log("-25 points to "+i+", total: "+MoveValue[i]);
+					//Debug.Log("-25 points to "+i+", total: "+MoveValue[i]);
 				}
 			}
 			}else{
-				MoveValue[i]=0;
+				MoveValue[i]=-1000;
 			}
 		}
 	}
