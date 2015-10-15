@@ -135,7 +135,8 @@ MonoBehaviour:
     \n\t\t\t\t\t\t maneuverable. All you need to do is click one and he'll \n\t\t\t\t\t\t
     tell you where he can go. If you want to move another \n\t\t\t\t\t\t one of your
     squad, just cancel the move by clicking the \n\t\t\t\t\t\t same squad member again.\n\nCreators:\t
-    \t\tJuha Sikstus and Konsta Sinisalo (though neither takes \n\t\t\t\t\t\tany responsibility)."
+    \t\tJuha Sikstus, Topi Salonen and Konsta Sinisalo (though \t\t\t\t\t\t\tnot one
+    of them takes any responsibility). \n\t\t\t\t\t\tany responsibility)."
 --- !u!222 &225472309
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -872,6 +873,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
